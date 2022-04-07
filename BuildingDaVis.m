@@ -57,9 +57,9 @@ clc
 % oupt = '/cluster/scratch/Recording 02/'; % Path to output file
 % oupt = '/cluster/scratch/Recording 03/'; % Path to output file
 
-% name = 'Recording_01.dat';  % Name of input trajectory file
-% name = 'Recording_02.dat';  % Name of input trajectory file
-% name = 'Recording_03.dat';  % Name of input trajectory file
+% name = 'Recording_01.dat'; % Name of input trajectory file
+% name = 'Recording_02.dat'; % Name of input trajectory file
+% name = 'Recording_03.dat'; % Name of input trajectory file
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

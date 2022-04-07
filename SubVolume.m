@@ -23,8 +23,13 @@ close all
 clc
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-inpt = 'D:\Path to input folder\';      
-oupt = 'D:\Path to output folder\';
+inpt = {'D:\Input folder for Recording 01\';
+        'D:\Input folder for Recording 02\';
+        'D:\Input folder for Recording 03\'};
+       
+oupt = {'D:\Output folder for Recording 01\'; 
+        'D:\Output folder for Recording 02\'; 
+        'D:\Output folder for Recording 03\'};  
 
 nmat = {'Recording_01_100001_101000_Buildingptv'; % Input file name
         'Recording_02_100001_101000_Buildingptv'; % Input file name
@@ -50,7 +55,7 @@ for fidx = 1:numel(nmat)
     
     fprintf('Processing file <strong>%s</strong>\n', nmat{fidx})
   
-    data = load(fullfile(inpt, sprintf('%s.txt', nmat{fidx})));
+    data = load(fullfile(inpt{fidx}, sprintf('%s.txt', nmat{fidx})));
                         
     % Flag coordinates outside the investigation volume -------------------
     disc = data(:,1) < volu{1}(1) | data(:,1) > volu{1}(2) |...
@@ -99,8 +104,8 @@ end
 % Write to disk -----------------------------------------------------------
 temp = data(cat(2, keep{:}),:);  
 
-save(fullfile(oupt, sprintf('%s_SubVolume.txt', nmat{fidx})), ...
-                    'temp', '-ascii', '-single', '-tabs')
+save(fullfile(oupt{fidx}, sprintf('%s_SubVolume.txt', nmat{fidx})), ...
+                          'temp', '-ascii', '-single', '-tabs')
 
 end % End of file loop
 

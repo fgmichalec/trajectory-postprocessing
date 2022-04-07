@@ -29,16 +29,13 @@ import numpy as np
 
 import os
 import re
-# import glob
-
-from pathlib import Path
 #####################################################################################################################################################
 
 #####################################################################################################################################################
 seqNumb = 3       # Number of subsequences
 colNumb = 5       # Number of columns in ptv files
 maxPart = 6000    # Max number of particles per frame
-minSave = 2       # Min trajectory duration for saving (in frames) 
+minSave = 2       # Min trajectory duration for saving (in frame(s)) 
 
 # The minimal duration is two frames no matter the value of minSave, because the initialization of a new trajectory requires an existing link
 # to the next time step.
@@ -47,17 +44,17 @@ minSave = 2       # Min trajectory duration for saving (in frames)
 #####################################################################################################################################################
 inpt = ["D:/Path to res folder for Recording 01/",
         "D:/Path to res folder for Recording 02/",
-        "D:/Path to res folder for Recording 03/",
+        "D:/Path to res folder for Recording 03/"
         ]
     
 oupt = ["D:/Output folder for Recording 01/",
         "D:/Output folder for Recording 02/",
-        "D:/Output folder for Recording 03/",
+        "D:/Output folder for Recording 03/"
         ]  
 
 nmat = ["Recording_01_100001_101000_Buildingptv", # Output file name
         "Recording_02_100001_101000_Buildingptv", # Output file name
-        "Recording_03_100001_101000_Buildingptv", # Output file name
+        "Recording_03_100001_101000_Buildingptv"  # Output file name
         ]
 #####################################################################################################################################################
 
@@ -71,11 +68,11 @@ def buildTraj(traj):
        
     while (partMat[ifra, ipar, 1] >= 0) and (ifra < np.subtract(np.shape(partMat)[0], 1)): # The ranking of the particles starts at zero in ptv files    
         
-            ipar = int(partMat[ifra, ipar, 1]) 
+           ipar = int(partMat[ifra, ipar, 1]) 
 
-            ifra = int(np.add(ifra, 1))      
+           ifra = int(np.add(ifra, 1))      
         
-            traj = np.append(traj, np.reshape(np.array([ifra, ipar]), (1, 2)), axis = 0)
+           traj = np.append(traj, np.reshape(np.array([ifra, ipar]), (1, 2)), axis = 0)
     
     return traj
 #####################################################################################################################################################
@@ -137,7 +134,7 @@ for idir, duma in enumerate(nmat):
                                      
         for indx in np.linspace(fbeg, fend, num = sdur, endpoint = True, dtype = int):
                         
-            fidx = open(os.path.join(Path(inpt[idir]), "".join(('ptv_is.', str(indx)))), 'r')  
+            fidx = open(os.path.join(inpt[idir], "".join(('ptv_is.', str(indx)))), 'r')  
             
             pidx = int(fidx.readline().strip('\n'))
                                     
@@ -162,12 +159,15 @@ for idir, duma in enumerate(nmat):
                # This only works for ptv files                   
                
         # Open output file --------------------------------------------------------------------------------------------------------------------------
-        ouptTota = open(os.path.join(Path(oupt[idir]), '{n}_{s:02d}.txt'.format(n = nmat[idir], s = np.add(iseq,1))), 'a')
+        if seqNumb > 1:
+           ouptTota = open(os.path.join(oupt[idir], '{n}_{s:02d}.txt'.format(n = nmat[idir], s = np.add(iseq,1))), 'a')
+        else:
+           ouptTota = open(os.path.join(oupt[idir], '{n}.txt'.format(n = nmat[idir])), 'a') 
 
         # Time step loop ----------------------------------------------------------------------------------------------------------------------------                                     
         for ifra in np.linspace(0, np.shape(partMat)[0], num = np.shape(partMat)[0], endpoint = False, dtype = int):
             
-            print('Processing frame number {na:0{width}} out of {nb:0{width}}'.format(na = np.add(ifra,1), nb = sdur, width = len(str(sdur)) ))
+            print('Processing frame number {na:0{width}} out of {nb:0{width}}'.format(na = np.add(ifra,1), nb = sdur, width = len(str(sdur))))
             
             # Particle loop -------------------------------------------------------------------------------------------------------------------------
             for ipar in np.linspace(0, int(posiVec[ifra]), num = int(posiVec[ifra]), endpoint = False, dtype = int):

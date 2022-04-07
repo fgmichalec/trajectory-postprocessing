@@ -25,25 +25,30 @@ import numpy as np
 import pandas as pd
 
 import os
-# import glob
-
-from pathlib import Path
+# import re
 #####################################################################################################################################################
 
 #####################################################################################################################################################
-inpt = Path("D:/Path to input folder/")      
-oupt = Path("D:/Path to output folder/")
+inpt = ["D:/Input folder for Recording 01/",
+        "D:/Input folder for Recording 02/",
+        "D:/Input folder for Recording 03/"
+        ]
+    
+oupt = ["D:/Output folder for Recording 01/",
+        "D:/Output folder for Recording 02/",
+        "D:/Output folder for Recording 03/"
+        ] 
 
-nmat = ["Recording_01_100001_101000_Buildingptv", # Input file name
-        "Recording_02_100001_101000_Buildingptv", # Input file name
-        "Recording_03_100001_101000_Buildingptv", # Input file name
+nmat = ["Recording_01_100001_101000_Buildingptv_SubVolume", # Input file name
+        "Recording_02_100001_101000_Buildingptv_SubVolume", # Input file name
+        "Recording_03_100001_101000_Buildingptv_SubVolume"  # Input file name
         ]   
 #####################################################################################################################################################
 
 #####################################################################################################################################################
 maxiDisp = 10    # Max jump displacement (mm)               
 maxiDura = 10    # Max jump duration (frames) 
-polySpan = 10    # Max duration of the regression window (frames) 
+polySpan = 10    # Max duration of the regression window (frame(s)) 
 
 sepaRadi = (1,5) # Radius of the search volume around predicted positions (mm)  
 
@@ -82,13 +87,13 @@ def addposi(ta, tb, jp) :
 
 #####################################################################################################################################################
 # File loop -----------------------------------------------------------------------------------------------------------------------------------------
-for fidx in nmat:
+for index, entry in enumerate(nmat):
+      
+    name = os.path.basename(entry)
     
-    name = os.path.basename(fidx)
-    
-    print('Processing file', name)
+    print(f"Processing file {name}")
   
-    data = np.loadtxt(os.path.join(inpt, "".join((name, '.txt'))))
+    data = np.loadtxt(os.path.join(inpt[index], "".join((name, '.txt'))))
         
     #################################################################################################################################################
     # Remove short fragments, renumber fragments, and retrieve starting frame and coordinates of each fragment --------------------------------------         
@@ -99,7 +104,7 @@ for fidx in nmat:
             
     data = np.split(data, np.cumsum(dura[:-1], dtype = int), axis = 0) # Convert from one single numpy array to a list of numpy arrays
     
-    data = np.delete(data, np.where(dura < polySpan)[0]) # Remove entries corresponding to short trajectories in time
+    data = [a for a in data if not a.shape[0] < polySpan] # Remove entries corresponding to short trajectories in time
     
     cbeg = [] # Coordinates of the first position
     cend = [] # Coordinates of the last position
@@ -307,10 +312,9 @@ for fidx in nmat:
     #################################################################################################################################################
 
     #################################################################################################################################################    
-    # Renumber trajectories -------------------------------------------------------------------------------------------------------------------------
-    for itra, duma in enumerate(mtot):
-        
-        mtot[itra][:,3] = itra # Broadcast new trajectory number
+    # Renumber trajectories (starting at one) -------------------------------------------------------------------------------------------------------
+    for itra, valu in enumerate(mtot, start = 1):        
+        valu[:,3] = itra # In place replacement of the value returned by enumerate() works here because the iterable is a list of numpy arrays        
     #################################################################################################################################################    
        
     #################################################################################################################################################
@@ -319,7 +323,7 @@ for fidx in nmat:
 
     # Save trajectories -----------------------------------------------------------------------------------------------------------------------------
     ntmp = "".join((name, '_Connecting.txt'))   
-    np.savetxt(os.path.join(oupt, ntmp), mtot, delimiter = '\t')
+    np.savetxt(os.path.join(oupt[index], ntmp), mtot, delimiter = '\t')
     #################################################################################################################################################
     
 #####################################################################################################################################################

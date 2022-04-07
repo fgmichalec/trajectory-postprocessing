@@ -20,40 +20,47 @@ import numpy as np
 # import pandas as pd
 
 import os
-# import glob
-
-from pathlib import Path
+# import re
 #####################################################################################################################################################
 
 #####################################################################################################################################################
-inpt = Path("D:/Path to input folder/")      
-oupt = Path("D:/Path to output folder/")
+inpt = ["D:/Input folder for Recording 01/",
+        "D:/Input folder for Recording 02/",
+        "D:/Input folder for Recording 03/"
+        ]
+    
+oupt = ["D:/Output folder for Recording 01/",
+        "D:/Output folder for Recording 02/",
+        "D:/Output folder for Recording 03/"
+        ] 
 
 nmat = ["Recording_01_100001_101000_Buildingptv", # Input file name
         "Recording_02_100001_101000_Buildingptv", # Input file name
-        "Recording_03_100001_101000_Buildingptv", # Input file name
+        "Recording_03_100001_101000_Buildingptv"  # Input file name
         ]  
 #####################################################################################################################################################
 
 #####################################################################################################################################################
 leng = 5  # Minimal length (in mm) 
-dura = 20 # Minimal duration (in frames) 
+dura = 20 # Minimal duration (in frame(s)) 
 #####################################################################################################################################################
 
 #####################################################################################################################################################
 # Limits of the investigation volume (in mm) --------------------------------------------------------------------------------------------------------
 volu = {'X':[10, 90], 
-        'Y':[10, 95], 
-        'Z':[15, 85]} # OpenPTV reference frame
+        'Y':[10, 90], 
+        'Z':[10, 90]} # OpenPTV reference frame
 #####################################################################################################################################################
 
+#####################################################################################################################################################
 # File loop -----------------------------------------------------------------------------------------------------------------------------------------
-for entry in nmat:
+for index, entry in enumerate(nmat):
+      
     name = os.path.basename(entry)
     
-    print('Processing file', name)
+    print(f"Processing file {name}")
   
-    data = np.loadtxt(os.path.join(inpt, "".join((name, '.txt'))))
+    data = np.loadtxt(os.path.join(inpt[index], "".join((name, '.txt'))))
                         
     # Flag coordinates outside the investigation volume (in mm) -------------------------------------------------------------------------------------    
     disc = np.logical_or.reduce((data[:,0] < volu['X'][0], data[:,0] > volu['X'][1],    
@@ -98,7 +105,7 @@ for entry in nmat:
     temp = data[np.hstack(keep), :].astype('float32')   
 
     # Save trajectories -----------------------------------------------------------------------------------------------------------------------------
-    ntmp = "".join((name, '_SubVolume.txt'))
+    ntmp = "".join((name, "_SubVolume.txt"))
     
-    np.savetxt(os.path.join(oupt, ntmp), temp, delimiter = '\t')
+    np.savetxt(os.path.join(oupt[index], ntmp), temp, delimiter = '\t')
 #####################################################################################################################################################
